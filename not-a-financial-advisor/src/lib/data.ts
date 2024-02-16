@@ -2,7 +2,6 @@
 
 import { unstable_noStore as noStore } from "next/cache";
 import { PrismaClient } from "@prisma/client";
-import { z } from "zod";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Expense, NewExpense } from "./definitions";
 
@@ -12,7 +11,6 @@ export async function createUserAccount(req: NextApiRequest, res: NextApiRespons
     noStore();
 
     const data = req.body;
-    const 
 
     const emailExists = checkEmail(data.email);
     if (emailExists === false) {
@@ -75,14 +73,14 @@ function initializeExpenses(userId: string | number) {
         { name: "Pet Care (All Expenses)", type:"misc", amount: 0, fixed: false },
 
     ];
-    expenses.map((expense: NewExpense) => {
+    expenses.map((exp: NewExpense) => {
         prisma.expense.create({
             data: {
-                userId,
-                name: expense.name,
-                type: expense.type,
-                amount: expense.amount,
-                fixed: expense.fixed,
+                userId: Number(userId),
+                name: exp.name,
+                type: exp.type,
+                amount: exp.amount,
+                fixed: exp.fixed,
             },
         });
     });

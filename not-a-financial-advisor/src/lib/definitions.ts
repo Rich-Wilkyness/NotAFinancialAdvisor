@@ -9,6 +9,7 @@ export type User = {
 
 export type Expense = {
     id: string | number;
+    userId: string | number;
     name: string;
     type: string;
     amount: number;
