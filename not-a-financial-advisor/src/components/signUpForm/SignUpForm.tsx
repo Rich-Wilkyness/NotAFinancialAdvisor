@@ -1,9 +1,9 @@
 'use client';
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useState, FormEvent } from "react";
 import { createUserAccount } from "@/lib/data";
 
-const initiaState = {
+const initialState = {
     message: null,
 };
 
@@ -17,13 +17,13 @@ function SignUpButton() {
     )
 };
 
-export function SignUpForm() {
-    const [state, formAction] = useFormState(createUserAccount,initiaState);
+export default function SignUpForm() {
+    const [state, formAction] = useFormState(createUserAccount, initialState);
 
     return (
         <form action={formAction}>
-            <input type='text' placeholder='Email' />
-            <input type='password' placeholder='Password' />
+            <input type='text' placeholder='Email' name="email" />
+            <input type='password' placeholder='Password' name="password"/>
             <SignUpButton />
             <p aria-live="polite" role="status">{state?.message}</p>
         </form>

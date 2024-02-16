@@ -1,9 +1,14 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// get the .env file with your database values
+// Validate: npx prisma validate
+// Format: npx prisma format
+// Migrate: npx prisma migrate dev --name [desired name, use init]
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 generator client {
@@ -11,78 +16,28 @@ generator client {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
-  expenses  Expenses[]
-  goals     Goals[]
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  password String
+  expenses Expense[]
+  goals    Goal[]
 }
 
-model Expenses {
-  id    Int     @id @default(autoincrement())
-  user  User    @relation(fields: [userId], references: [id])
-  userId  Int
-  mortgage Int  @default(0)
-  mortgageFixed Boolean default(false)
-  homeInsurance Int  @default(0)
-  homeInsuranceFixed Boolean default(false)
-  propertyTax Int  @default(0)
-  propertyTaxFixed Boolean default(false)
-  hoa Int  @default(0)
-  hoaFixed Boolean default(false)
-  utilities Int  @default(0)
-  utilities Boolean default(false)
-
-  car Int  @default(0)
-  carFixed Boolean default(false)
-  autoInsurance Int  @default(0)
-  autoInsuranceFixed Boolean default(false)
-  fuel Int  @default(0)
-  fuelFixed Boolean default(false)
-
-  health Int  @default(0)
-  healthFixed Boolean default(false)
-  lifeInsurance Int  @default(0)
-  lifeInsuranceFixed Boolean default(false)
-  dental Int  @default(0)
-  dentalFixed Boolean default(false)
-  eye Int  @default(0)
-  eyeFixed Boolean default(false)
-
-  internet Int  @default(0)
-  internetFixed Boolean default(false)
-  cable Int  @default(0)
-  cableFixed Boolean default(false)
-  phone Int  @default(0)
-  phoneFixed Boolean default(false)
-  subscriptions Int  @default(0)
-  subscriptionsFixed Boolean default(false)
-
-  studentLoans Int  @default(0)
-  studentLoansFixed Boolean default(false)
-  creditCard Int  @default(0)
-  creditCardFixed Boolean default(false)
-  otherLoans Int  @default(0)
-  otherLoansFixed Boolean default(false)
-
-  food Int  @default(0)
-  foodFixed Boolean default(false)
-  clothing Int  @default(0)
-  clothingFixed Boolean default(false)
-  childCare Int  @default(0)
-  childCareFixed Boolean default(false)
-  childActivities Int  @default(0)
-  childActivitiesFixed Boolean default(false)
-  childSupport Int  @default(0)
-  childSupportFixed Boolean default(false)
+model Expense {
+  id     Int     @id @default(autoincrement())
+  user   User    @relation(fields: [userId], references: [id])
+  userId Int
+  type   String
+  amount Int
+  fixed  Boolean
 }
 
 model Goal {
-  id  Int   @id @default(autoincrement())
-  user  User  @relation(fields: [userId], references:[id])
-  userId  Int
-  name  String
-  cost Int
-  contribution  Int
+  id                  Int    @id @default(autoincrement())
+  user                User   @relation(fields: [userId], references: [id])
+  userId              Int
+  name                String
+  cost                Int
+  contribution        Int
   currentContribution Int
 }
