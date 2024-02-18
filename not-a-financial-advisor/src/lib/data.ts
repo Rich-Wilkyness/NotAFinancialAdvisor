@@ -2,48 +2,54 @@
 
 import { unstable_noStore as noStore } from "next/cache";
 import { PrismaClient } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Expense, NewExpense } from "./definitions";
+import { NewExpense } from "./definitions";
+import { NewUser } from "./definitions";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
-export async function createUserAccount(req: NextApiRequest, res: NextApiResponse) {
-    noStore();
-
-    const data = req.body;
-
-    const emailExists = checkEmail(data.email);
-    if (emailExists === false) {
-        return { message: "Email already exists" };
+export async function createUserAccount(data: NewUser) {
+    try {
+        noStore();
+    
+        const emailExists = checkEmail(data.email);
+        if (emailExists === false) {
+            return "Email already exists";
+        }
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const user = await prisma.user.create({
+            data: {
+                email: data.email,
+                password: hashedPassword,
+            },
+        });
+        initializeExpenses(user.id);
+        return "User account created";
     }
-    const user = await prisma.user.create({
-        data: {
-            email,
-            password,
-        },
-    });
-    return user;
+    catch (error){
+        return "Error creating user account";
+    }
 }
 
 function checkEmail(email: string) {
-    noStore();
+    try {
+        noStore();
 
-    const user = prisma.user.findUnique({
-        where: {
-            email,
-        },
-    });
-    if (!user) {
+        const user = prisma.user.findUnique({
+            where: {
+                email: email,
+            },
+        });
+        return !!user;
+    }
+    catch (error){
+        console.log("Error checking email: ", error);
         return false;
-    } else {
-        return true;
     }
 }
 
 function initializeExpenses(userId: string | number) {
-    noStore();
-
-    const expenses = [
+    const expenses: NewExpense[] = [
         { name: "Mortgage / Rent", type:"housing", amount: 0, fixed: false },
         { name: "Home / Renters Insurance", type:"housing", amount: 0, fixed: false},
         { name: "Property Taxes", type:"housing", amount: 0, fixed: false},
@@ -73,15 +79,23 @@ function initializeExpenses(userId: string | number) {
         { name: "Pet Care (All Expenses)", type:"misc", amount: 0, fixed: false },
 
     ];
-    expenses.map((exp: NewExpense) => {
-        prisma.expense.create({
-            data: {
+    try {
+        const expenseData = expenses.map((exp: NewExpense) => {
+            return {
                 userId: Number(userId),
                 name: exp.name,
                 type: exp.type,
                 amount: exp.amount,
                 fixed: exp.fixed,
-            },
+            };
         });
-    });
+        prisma.expense.createMany({
+            data: expenseData,
+        });
+        console.log("Expenses initialized");
+    }
+    catch (error){
+        console.log("Error initializing expenses: ", error);
+        throw new Error("Error initializing expenses");
+    }
 }

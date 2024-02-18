@@ -1,31 +1,29 @@
-'use client';
-
-import { useState, FormEvent } from "react";
 import { createUserAccount } from "@/lib/data";
+import { SignUpButton } from './SignUpButton'
+import { z } from 'zod';
 
 const initialState = {
-    message: null,
-};
-
-function SignUpButton() {
-    const { pending } = useFormStatus()
-
-    return (
-        <button type='submit' aria-disabled={pending}>
-            Sign Up
-        </button>
-    )
+    message: '',
 };
 
 export default function SignUpForm() {
-    const [state, formAction] = useFormState(createUserAccount, initialState);
+    async function validateUserAccount(formData: FormData) {
+        'use server'
+        const schema = z.object({
+            email: z.string().email(),
+            password: z.string().min(8),
+        });
+        const validatedFields = schema.parse({
+            email: formData.get('email'),
+            password: formData.get('password'),
+        });
+        initialState.message = await createUserAccount(validatedFields);
 
     return (
-        <form action={formAction}>
+        <form action={validateUserAccount}>
             <input type='text' placeholder='Email' name="email" />
             <input type='password' placeholder='Password' name="password"/>
             <SignUpButton />
-            <p aria-live="polite" role="status">{state?.message}</p>
         </form>
-    )
+    )}
 }

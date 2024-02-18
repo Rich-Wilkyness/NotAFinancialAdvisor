@@ -6,6 +6,11 @@ export type User = {
     expenses: Expense[];
     goals: Goal[];
 }
+export type NewUser = {
+    email: string;
+    password: string;
+}
+
 
 export type Expense = {
     id: string | number;
