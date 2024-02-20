@@ -2,11 +2,11 @@
 
 import { useFormStatus } from 'react-dom';
 
-export function SignUpButton() {
+export function CreateUserButton() {
     const { pending } = useFormStatus();
     return (
         <button type='submit' aria-disabled={pending}>
-            Sign Up
+            Create Account
         </button>
     )
 };

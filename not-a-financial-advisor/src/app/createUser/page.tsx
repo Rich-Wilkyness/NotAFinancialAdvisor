@@ -1,10 +1,29 @@
-import SignUpForm from "@/components/signUpForm/SignUpForm"
+import { createUserAccount } from "@/lib/data";
+import { CreateUserButton } from './createUserButton'
+import { z } from 'zod';
 
-export default function SignUpPage() {
+const initialState = {
+    message: '',
+};
+
+export default function SignUpForm() {
+    async function validateUserAccount(formData: FormData) {
+        'use server'
+        const schema = z.object({
+            email: z.string().email(),
+            password: z.string().min(8),
+        });
+        const validatedFields = schema.parse({
+            email: formData.get('email'),
+            password: formData.get('password'),
+        });
+        initialState.message = await createUserAccount(validatedFields);
+
     return (
-        <div>
-            <h1>Sign Up</h1>
-            <SignUpForm />
-        </div>
-    )
+        <form action={validateUserAccount}>
+            <input type='text' placeholder='Email' name="email" />
+            <input type='password' placeholder='Password' name="password"/>
+            <CreateUserButton />
+        </form>
+    )}
 }
