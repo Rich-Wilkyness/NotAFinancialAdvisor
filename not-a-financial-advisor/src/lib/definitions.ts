@@ -1,11 +1,13 @@
 
 export type User = {
-    id: string | number;
+    id: string;
     email: string;
     password: string;
+    income: string | number;
     expenses: Expense[];
     goals: Goal[];
 }
+
 export type NewUser = {
     email: string;
     password: string;

@@ -3,14 +3,23 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { PrismaClient } from "@prisma/client";
 import { NewExpense } from "./definitions";
-import { NewUser } from "./definitions";
+import { z } from "zod";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
-export async function createUserAccount(data: NewUser) {
+export async function createUserAccount(formData: FormData) {
     try {
         noStore();
+        const schema = z.object({
+            email: z.string().email(),
+            password: z.string().min(8),
+        });
+        const data = schema.parse({
+            email: formData.get('email'),
+            password: formData.get('password'),
+        });
+
     
         const emailExists = checkEmail(data.email);
         if (emailExists === false) {
@@ -23,11 +32,14 @@ export async function createUserAccount(data: NewUser) {
                 password: hashedPassword,
             },
         });
-        initializeExpenses(user.id);
-        return "User account created";
+        console.log('here');
+        // initializeExpenses(user.id);
+        console.log('expenses initialized');
+        return true;
     }
     catch (error){
-        return "Error creating user account";
+        console.log("Error creating user: ", error);
+        return false;
     }
 }
 
@@ -97,5 +109,28 @@ function initializeExpenses(userId: string | number) {
     catch (error){
         console.log("Error initializing expenses: ", error);
         throw new Error("Error initializing expenses");
+    }
+}
+
+export async function updateUserIncome(formData: FormData) {
+    try {
+        noStore();
+        const schema = z.object({
+            income: z.number(),
+        });
+        const data = schema.parse({
+            income: Number(formData.get('income')),
+        });
+        const user = prisma.user.update({
+            where: { id: 1 },
+            data: {
+                income: data.income,
+            },
+        });
+        return true;
+    }
+    catch (error){
+        console.log("Error updating income: ", error);
+        return false;
     }
 }

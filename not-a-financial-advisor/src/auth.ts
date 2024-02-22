@@ -4,7 +4,7 @@ import { authConfig } from './auth.config';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import type { User } from '@/lib/definitions';
+import { User } from '@/lib/definitions';
 
 const prisma = new PrismaClient();
 
@@ -15,8 +15,16 @@ async function getUserByEmail(email: string): Promise<User | undefined> {
             where: {
                 email: email,
             },
+            include: {
+                // income: true,
+                expenses: true,
+                goals: true,
+            },
         });
-        return user;
+        if (user) {
+            return { ...user, id: String(user.id)};
+        }
+        return undefined;
     } catch (error) {
         console.log('Error getting user by email: ', error);
         throw new Error('Error getting user by email');
@@ -27,8 +35,9 @@ export const { auth, signIn, signOut } = NextAuth({
     ...authConfig,
     providers: [
         Credentials({
-            async authoize(credentials) {
-                const parsedCredentials = z.object({ email: z.string().email(), passowrd: z.string().min(8) }).safeParse(credentials);
+            async authorize(credentials, request) {
+                const parsedCredentials = z.object({ email: z.string().email(), password: z.string().min(8) }).safeParse(credentials);
+                console.log('1234567890');
 
                 if (parsedCredentials.success) {
                     const { email, password } = parsedCredentials.data;

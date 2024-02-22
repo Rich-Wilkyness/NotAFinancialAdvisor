@@ -19,7 +19,9 @@ export default function NavLinks() {
                 <Link
                     key={link.name}
                     href={link.href}
+                    className={pathname === link.href ? 'active' : ''}
                 >
+                    <p>{link.name}</p>
                 </Link>
             );
         })}
