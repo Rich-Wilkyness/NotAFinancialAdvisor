@@ -134,3 +134,53 @@ export async function updateUserIncome(formData: FormData) {
         return false;
     }
 }
+
+export async function userSignIn(formData: FormData) {
+    try {
+        noStore();
+        const schema = z.object({
+            email: z.string().email(),
+            password: z.string().min(8),
+        });
+        const data = schema.parse({
+            email: formData.get('email'),
+            password: formData.get('password'),
+        });
+
+        const user = await prisma.user.findUnique({
+            where: {
+                email: data.email,
+            },
+            include: {
+                // income: true,
+                expenses: true,
+                goals: true,
+            },
+        });
+        if (user) {
+            const passwordMatch = await bcrypt.compare(data.password, user.password);
+            if (passwordMatch) {
+                return true;
+            }
+        }
+        return false;
+    }
+    catch (error){
+        throw error;
+    }
+}
+
+export async function fetchExpensesByType(type: string | undefined) {
+    try {
+      noStore();
+        const expenses = await prisma.expense.findMany({
+            where: {
+            type: type,
+            },                
+        });
+        return expenses;
+    }
+    catch (error){
+        throw error;
+    }
+}

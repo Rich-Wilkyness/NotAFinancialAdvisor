@@ -15,8 +15,8 @@ export type NewUser = {
 
 
 export type Expense = {
-    id: string | number;
-    userId: string | number;
+    id: number;
+    userId: number;
     name: string;
     type: string;
     amount: number;

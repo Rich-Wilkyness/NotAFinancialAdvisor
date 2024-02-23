@@ -1,0 +1,12 @@
+:root {
+    --primary-color: #2A243D;
+    --secondary-color: #443A64;
+    --cards-color: #C3BDD9;
+    --background-color: #F2F2F2;
+    --success-color: #28a745;
+    --info-color: #17a2b8;
+    --warning-color: #c79500;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}

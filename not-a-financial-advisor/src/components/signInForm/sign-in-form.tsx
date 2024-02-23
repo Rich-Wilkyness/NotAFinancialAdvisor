@@ -1,21 +1,29 @@
-'use client';
+import { userSignIn } from '@/lib/data';
+import { redirect } from 'next/navigation';
+import SignInButton from '@/components/signInForm/signInButton';
+import styles from '@/app/sign-in/page.module.css';
 
-import { useFormState, useFormStatus } from 'react-dom';
-import { authenticate } from '@/lib/actions';
- 
-export default function SignInForm() {
-  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
- 
+export default function SignInForm() { 
+
   return (
-    <form action={dispatch} >
-      <div>
-        <h1>
-          Please log in to continue.
-        </h1>
-        <div>
-          <div>
-            <label htmlFor="email">Email</label>
-            <div>
+    <form action={async (formData) => {
+      'use server';
+      console.log(formData);
+      const isSignedIn = await userSignIn(formData);
+      console.log(isSignedIn);
+      if (isSignedIn === true) {
+        redirect('/dashboard');
+      }
+      else {
+        redirect('/sign-in');
+      }
+    }} >
+      <div className={styles.form}>
+        <h2>
+          Log in
+        </h2>
+          <div className={styles.input}>
+              <label htmlFor="email">Email</label>
               <input
                 id="email"
                 type="email"
@@ -23,11 +31,9 @@ export default function SignInForm() {
                 placeholder="Enter your email address"
                 required
               />
-            </div>
           </div>
-          <div>
-            <label htmlFor="password" >Password</label>
-            <div>
+          <div  className={styles.input}>
+              <label htmlFor="password" >Password</label>
               <input
                 id="password"
                 type="password"
@@ -36,31 +42,12 @@ export default function SignInForm() {
                 required
                 minLength={8}
               />
-            </div>
           </div>
+        <div className={styles.input}>
+          <SignInButton></SignInButton>  
         </div>
-        <LoginButton />
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          {errorMessage && (
-            <>
-              <p className="text-sm text-red-500">{errorMessage}</p>
-            </>
-          )}
         </div>
-      </div>
     </form>
   );
 }
  
-function LoginButton() {
-  const { pending } = useFormStatus();
- 
-  return (
-    <button aria-disabled={pending}>
-      Sign in
-    </button>
-  );
-}

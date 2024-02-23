@@ -1,28 +1,32 @@
-import { createUserAccount } from "@/lib/data";
-import { CreateUserButton } from '@/components/signUpForm/createUserButton';
-import { redirect } from "next/navigation";
+import SignUpForm from "@/components/signUpForm/SignUpForm"
+import { Metadata } from 'next';
+import styles from './page.module.css';
+import Image from 'next/image';
+
+export const meta: Metadata = {
+    title: 'Create User',
+    description: 'Create an account.',
+}
 
 
-
-export default function SignUpForm() {
-
+export default async function SignUpPage() {
     return (
-        <form action={async (formData) => {
-            'use server';
-            console.log(formData);
-            const isCreated = await createUserAccount(formData);
-            if (isCreated === true) {
-                redirect('/dashboard');
-            }
-            else {
-                redirect('/create-user');
-            }
-        }}>
-            <label htmlFor="email">Email: </label>
-            <input type='text' placeholder='Email' name="email" />
-            <label htmlFor="password">Password: </label>
-            <input type='password' placeholder='Password' name="password"/>
-            <CreateUserButton></CreateUserButton>
-        </form>
+        <main >
+            <div className={styles.heading}>
+                <Image
+                    src={'/money.jpg'}
+                    alt="Money"
+                    width={100}
+                    height={100}
+                >
+                </Image>
+            </div>
+            <div className={styles.title}>
+                <h1>Definitely Not Financial Advice</h1>
+            </div>
+            <div className={styles.main}>
+                <SignUpForm></SignUpForm>    
+            </div>
+        </main>
     )
 }

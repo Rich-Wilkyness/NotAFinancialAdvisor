@@ -1,15 +1,13 @@
 'use client';
 
-import styles from '@/app/create-user/page.module.css';
+import styles from '@/app/sign-in/page.module.css';
 import { useFormStatus } from 'react-dom';
 
-
-export function CreateUserButton() {
+export default function SignInButton() {
     const { pending } = useFormStatus();
-
     return (
         <button type='submit' aria-disabled={pending} className={styles.button}>
-            Create Account
+            Sign In
         </button>
-    )
-};
+    );
+}

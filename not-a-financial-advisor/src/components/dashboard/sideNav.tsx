@@ -3,27 +3,30 @@ import NavLinks from '@/components/dashboard/nav-links';
 import Image from 'next/image';
 import { redirect } from "next/navigation";
 import { signOut } from "@/auth";
+import styles from '@/app/dashboard/page.module.css';
 
 export default function SideNav() {
     return (
-        <div>
+        <div className={styles.main}>
             <Link
                 href="/dashboard"
             >
                 <Image
                     src={'/money.jpg'}
                     alt="Money"
-                    width={100}
-                    height={100}
+                    width={150}
+                    height={150}
                 ></Image>
             </Link>
             <NavLinks />
-            <div>
+            <div className={styles.buttonBottom}>
                 <form action={async () => {
                     'use server';
-                    await signOut();
+                    // await signOut();
                     redirect('/');
-                }}></form>
+                }}>
+                    <button className={styles.button}>Sign Out</button>
+                </form>
             </div>
         </div>
     )
