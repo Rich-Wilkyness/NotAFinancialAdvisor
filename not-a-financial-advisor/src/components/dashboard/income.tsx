@@ -7,7 +7,7 @@ export default function Income() {
             <form action={async (formData) => {
                 'use server';
                 console.log(formData);
-                const isCreated = await updateUserIncome(formData); 
+                // const isCreated = await updateUserIncome(formData); 
             }}>
                 <label htmlFor="income">Income: </label>
                 <input type='number' placeholder='Income' name="income" />

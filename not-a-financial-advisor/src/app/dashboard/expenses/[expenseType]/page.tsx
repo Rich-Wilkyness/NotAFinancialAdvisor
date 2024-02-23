@@ -10,7 +10,7 @@ export default async function ExpensesPage({ params }: { params: { expenseType: 
         <div>
             <h1>Expenses</h1>
             <div>
-                <ExpensesNav expenseType={params.expenseType} />
+                {/* <ExpensesNav expenseType={params.expenseType} /> */}
             </div>
             <div>
                 {/* <ExpenseForm expenses={expenses} /> */}

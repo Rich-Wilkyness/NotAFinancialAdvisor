@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 
-export const meta: Metadata = {
+export const metadata: Metadata = {
     title: 'Sign In',
     description: 'Sign in to your account.',
 }
