@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import styles from './page.module.css';
 import Image from 'next/image';
 
-export const meta: Metadata = {
+export const metadata: Metadata = {
     title: 'Create User',
     description: 'Create an account.',
 }
